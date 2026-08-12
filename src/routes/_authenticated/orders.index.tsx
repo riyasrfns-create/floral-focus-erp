@@ -55,16 +55,7 @@ function OrdersPage() {
         .select("*, customers(name)")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as (Record<string, never> & {
-        id: string;
-        order_number: string;
-        status: string;
-        fulfilment: string;
-        requested_date: string | null;
-        total: number;
-        created_at: string;
-        customers: { name: string } | null;
-      })[];
+      return data;
     },
   });
 
