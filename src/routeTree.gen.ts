@@ -16,6 +16,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers.index'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
 import { Route as AuthenticatedInvoicesIndexRouteImport } from './routes/_authenticated/invoices.index'
+import { Route as AuthenticatedInvoicesIdRouteImport } from './routes/_authenticated/invoices.$id'
+import { Route as AuthenticatedInvoicesNewRouteImport } from './routes/_authenticated/invoices.new'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders.index'
 import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders.$id'
 
@@ -56,6 +58,17 @@ const AuthenticatedInvoicesIndexRoute =
     path: '/invoices/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedInvoicesIdRoute = AuthenticatedInvoicesIdRouteImport.update({
+  id: '/invoices/$id',
+  path: '/invoices/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInvoicesNewRoute =
+  AuthenticatedInvoicesNewRouteImport.update({
+    id: '/invoices/new',
+    path: '/invoices/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOrdersIndexRoute =
   AuthenticatedOrdersIndexRouteImport.update({
     id: '/orders/',
@@ -73,6 +86,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/invoices/$id': typeof AuthenticatedInvoicesIdRoute
+  '/invoices/new': typeof AuthenticatedInvoicesNewRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/invoices/': typeof AuthenticatedInvoicesIndexRoute
@@ -83,6 +98,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/invoices/$id': typeof AuthenticatedInvoicesIdRoute
+  '/invoices/new': typeof AuthenticatedInvoicesNewRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/invoices': typeof AuthenticatedInvoicesIndexRoute
@@ -95,6 +112,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/_authenticated/invoices/$id': typeof AuthenticatedInvoicesIdRoute
+  '/_authenticated/invoices/new': typeof AuthenticatedInvoicesNewRoute
   '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/invoices/': typeof AuthenticatedInvoicesIndexRoute
@@ -107,6 +126,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/customers/$id'
+    | '/invoices/$id'
+    | '/invoices/new'
     | '/orders/$id'
     | '/customers/'
     | '/invoices/'
@@ -117,6 +138,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/customers/$id'
+    | '/invoices/$id'
+    | '/invoices/new'
     | '/orders/$id'
     | '/customers'
     | '/invoices'
@@ -128,6 +151,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/customers/$id'
+    | '/_authenticated/invoices/$id'
+    | '/_authenticated/invoices/new'
     | '/_authenticated/orders/$id'
     | '/_authenticated/customers/'
     | '/_authenticated/invoices/'
@@ -191,6 +216,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInvoicesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/invoices/$id': {
+      id: '/_authenticated/invoices/$id'
+      path: '/invoices/$id'
+      fullPath: '/invoices/$id'
+      preLoaderRoute: typeof AuthenticatedInvoicesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/invoices/new': {
+      id: '/_authenticated/invoices/new'
+      path: '/invoices/new'
+      fullPath: '/invoices/new'
+      preLoaderRoute: typeof AuthenticatedInvoicesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/orders/': {
       id: '/_authenticated/orders/'
       path: '/orders'
@@ -211,6 +250,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
+  AuthenticatedInvoicesIdRoute: typeof AuthenticatedInvoicesIdRoute
+  AuthenticatedInvoicesNewRoute: typeof AuthenticatedInvoicesNewRoute
   AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedInvoicesIndexRoute: typeof AuthenticatedInvoicesIndexRoute
@@ -220,6 +261,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
+  AuthenticatedInvoicesIdRoute: AuthenticatedInvoicesIdRoute,
+  AuthenticatedInvoicesNewRoute: AuthenticatedInvoicesNewRoute,
   AuthenticatedOrdersIdRoute: AuthenticatedOrdersIdRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedInvoicesIndexRoute: AuthenticatedInvoicesIndexRoute,
