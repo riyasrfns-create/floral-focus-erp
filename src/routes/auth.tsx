@@ -193,6 +193,24 @@ function AuthPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="role">Your role</Label>
+                  <Select value={role} onValueChange={setRole}>
+                    <SelectTrigger id="role" className="w-full">
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SIGNUP_ROLES.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>
+                          {r.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Owner is reserved for the first account created.
+                  </p>
+                </div>
                 <Button type="submit" className="w-full" disabled={busy}>
                   Create account
                 </Button>
