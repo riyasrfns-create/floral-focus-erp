@@ -60,8 +60,13 @@ function SettingsPage() {
       if (form.default_tax_rate < 0 || form.invoice_next_number < 1)
         throw new Error("Tax rate and invoice number must be positive.");
       if (!settings) throw new Error("Settings not found.");
-      const { error } = await supabase.from("business_settings").update(form).eq("id", settings.id);
+      const { data, error } = await supabase
+        .from("business_settings")
+        .update(form)
+        .eq("id", settings.id)
+        .select();
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error("Save blocked — owner access required.");
     },
     onSuccess: () => {
       toast.success("Settings saved.");
