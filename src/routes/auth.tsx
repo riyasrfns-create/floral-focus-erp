@@ -70,7 +70,7 @@ function AuthPage() {
       password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: { full_name: fullName },
+        data: { full_name: fullName, role },
       },
     });
     setBusy(false);
@@ -78,7 +78,11 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Account created. You can sign in now.");
+    toast.success(
+      role === "owner"
+        ? "Account created. Owner access is only granted to the first account — otherwise you start as Staff."
+        : "Account created. You can sign in now.",
+    );
   };
 
   const google = async () => {
