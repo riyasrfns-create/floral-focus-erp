@@ -8,6 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const SIGNUP_ROLES = [
+  { value: "owner", label: "Owner" },
+  { value: "manager", label: "Manager" },
+  { value: "cashier", label: "Cashier" },
+  { value: "staff", label: "Staff" },
+] as const;
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -29,6 +37,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState<string>("staff");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -61,7 +70,7 @@ function AuthPage() {
       password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: { full_name: fullName },
+        data: { full_name: fullName, role },
       },
     });
     setBusy(false);
@@ -69,7 +78,11 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Account created. You can sign in now.");
+    toast.success(
+      role === "owner"
+        ? "Account created. Owner access is only granted to the first account — otherwise you start as Staff."
+        : "Account created. You can sign in now.",
+    );
   };
 
   const google = async () => {
@@ -179,6 +192,24 @@ function AuthPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                </div>
+                <div>
+                  <Label htmlFor="role">Your role</Label>
+                  <Select value={role} onValueChange={setRole}>
+                    <SelectTrigger id="role" className="w-full">
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SIGNUP_ROLES.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>
+                          {r.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Owner is reserved for the first account created.
+                  </p>
                 </div>
                 <Button type="submit" className="w-full" disabled={busy}>
                   Create account
