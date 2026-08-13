@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.is_staff_member() FROM anon, authenticated, public;
