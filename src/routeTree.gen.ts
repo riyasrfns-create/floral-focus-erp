@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDeliveriesRouteImport } from './routes/_authenticated/deliveries'
 import { Route as AuthenticatedFlowersRouteImport } from './routes/_authenticated/flowers'
+import { Route as AuthenticatedHelpRouteImport } from './routes/_authenticated/help'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedSalesRouteImport } from './routes/_authenticated/sales'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -53,6 +54,11 @@ const AuthenticatedDeliveriesRoute = AuthenticatedDeliveriesRouteImport.update({
 const AuthenticatedFlowersRoute = AuthenticatedFlowersRouteImport.update({
   id: '/flowers',
   path: '/flowers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHelpRoute = AuthenticatedHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliveries': typeof AuthenticatedDeliveriesRoute
   '/flowers': typeof AuthenticatedFlowersRoute
+  '/help': typeof AuthenticatedHelpRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/sales': typeof AuthenticatedSalesRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliveries': typeof AuthenticatedDeliveriesRoute
   '/flowers': typeof AuthenticatedFlowersRoute
+  '/help': typeof AuthenticatedHelpRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/sales': typeof AuthenticatedSalesRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliveries': typeof AuthenticatedDeliveriesRoute
   '/_authenticated/flowers': typeof AuthenticatedFlowersRoute
+  '/_authenticated/help': typeof AuthenticatedHelpRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/sales': typeof AuthenticatedSalesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliveries'
     | '/flowers'
+    | '/help'
     | '/inventory'
     | '/sales'
     | '/settings'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliveries'
     | '/flowers'
+    | '/help'
     | '/inventory'
     | '/sales'
     | '/settings'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/deliveries'
     | '/_authenticated/flowers'
+    | '/_authenticated/help'
     | '/_authenticated/inventory'
     | '/_authenticated/sales'
     | '/_authenticated/settings'
@@ -267,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/flowers'
       fullPath: '/flowers'
       preLoaderRoute: typeof AuthenticatedFlowersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/help': {
+      id: '/_authenticated/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof AuthenticatedHelpRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inventory': {
@@ -346,6 +365,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliveriesRoute: typeof AuthenticatedDeliveriesRoute
   AuthenticatedFlowersRoute: typeof AuthenticatedFlowersRoute
+  AuthenticatedHelpRoute: typeof AuthenticatedHelpRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedSalesRoute: typeof AuthenticatedSalesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -362,6 +382,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliveriesRoute: AuthenticatedDeliveriesRoute,
   AuthenticatedFlowersRoute: AuthenticatedFlowersRoute,
+  AuthenticatedHelpRoute: AuthenticatedHelpRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedSalesRoute: AuthenticatedSalesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
