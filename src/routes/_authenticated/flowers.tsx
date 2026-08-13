@@ -6,12 +6,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSettings } from "@/hooks/useSettings";
-import { formatDate, formatMoney, todayISO, daysLeft } from "@/lib/format";
+import { formatDate, formatMoney, todayISO, daysBetween } from "@/lib/format";
 import { downloadCSV } from "@/lib/export";
 import { PageHeader, SectionCard, StatCard, EmptyState, FieldLabel } from "@/components/erp/ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -35,27 +34,26 @@ function FlowersPage() {
   const [wasteOpen, setWasteOpen] = useState(false);
   const [batch, setBatch] = useState({
     flower_name: "",
-    quantity: 0,
-    unit: "stem",
-    arrival_date: todayISO(),
+    variety: "",
+    quantity_received: 0,
+    date_received: todayISO(),
     shelf_life_days: 7,
     supplier: "",
-    cost: 0,
+    cost_per_unit: 0,
   });
   const [waste, setWaste] = useState({
     flower_name: "",
     quantity: 0,
     reason: "Expired",
     logged_on: todayISO(),
-    estimated_loss: 0,
-    notes: "",
+    cost_value: 0,
   });
 
   const { data, isLoading } = useQuery({
     queryKey: ["flowers"],
     queryFn: async () => {
       const [batches, wastage] = await Promise.all([
-        supabase.from("flower_batches").select("*").order("arrival_date", { ascending: false }),
+        supabase.from("flower_batches").select("*").order("date_received", { ascending: false }),
         supabase.from("wastage_log").select("*").order("logged_on", { ascending: false }),
       ]);
       return { batches: batches.data ?? [], wastage: wastage.data ?? [] };
@@ -65,9 +63,11 @@ function FlowersPage() {
   const addBatch = useMutation({
     mutationFn: async () => {
       if (!batch.flower_name.trim()) throw new Error("Flower name is required.");
-      if (batch.quantity <= 0 || batch.shelf_life_days <= 0 || batch.cost < 0)
+      if (batch.quantity_received <= 0 || batch.shelf_life_days <= 0 || batch.cost_per_unit < 0)
         throw new Error("Quantity, shelf life and cost must be valid positive numbers.");
-      const { error } = await supabase.from("flower_batches").insert(batch);
+      const { error } = await supabase
+        .from("flower_batches")
+        .insert({ ...batch, current_stock: batch.quantity_received });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -81,7 +81,7 @@ function FlowersPage() {
   const addWaste = useMutation({
     mutationFn: async () => {
       if (!waste.flower_name.trim()) throw new Error("Flower name is required.");
-      if (waste.quantity <= 0 || waste.estimated_loss < 0) throw new Error("Enter a valid quantity and loss.");
+      if (waste.quantity <= 0 || waste.cost_value < 0) throw new Error("Enter a valid quantity and loss.");
       const { error } = await supabase.from("wastage_log").insert({ ...waste, staff_name: displayName });
       if (error) throw error;
     },
@@ -96,7 +96,7 @@ function FlowersPage() {
   const batches = useMemo(
     () =>
       (data?.batches ?? []).map((b) => {
-        const left = daysLeft(b.arrival_date, b.shelf_life_days);
+        const left = b.shelf_life_days - daysBetween(b.date_received);
         return {
           ...b,
           left,
@@ -106,7 +106,7 @@ function FlowersPage() {
     [data],
   );
 
-  const totalLoss = (data?.wastage ?? []).reduce((s, w) => s + Number(w.estimated_loss), 0);
+  const totalLoss = (data?.wastage ?? []).reduce((s, w) => s + Number(w.cost_value), 0);
 
   return (
     <div>
@@ -149,8 +149,8 @@ function FlowersPage() {
                   <thead>
                     <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
                       <th className="py-2 pr-3">Flower</th>
-                      <th className="py-2 pr-3 text-right">Qty</th>
-                      <th className="py-2 pr-3">Arrived</th>
+                      <th className="py-2 pr-3 text-right">Stock / received</th>
+                      <th className="py-2 pr-3">Received</th>
                       <th className="py-2 pr-3 text-right">Shelf life</th>
                       <th className="py-2 pr-3">Freshness</th>
                       <th className="py-2 pr-3">Supplier</th>
@@ -162,9 +162,9 @@ function FlowersPage() {
                       <tr key={b.id} className="border-b border-border/60">
                         <td className="py-2.5 pr-3 font-medium">{b.flower_name}</td>
                         <td className="py-2.5 pr-3 text-right">
-                          {Number(b.quantity)} {b.unit}
+                          {Number(b.current_stock)} / {Number(b.quantity_received)}
                         </td>
-                        <td className="py-2.5 pr-3">{formatDate(b.arrival_date)}</td>
+                        <td className="py-2.5 pr-3">{formatDate(b.date_received)}</td>
                         <td className="py-2.5 pr-3 text-right">{b.shelf_life_days} days</td>
                         <td className="py-2.5 pr-3">
                           <span
@@ -181,7 +181,7 @@ function FlowersPage() {
                           </span>
                         </td>
                         <td className="py-2.5 pr-3 text-muted-foreground">{b.supplier ?? "—"}</td>
-                        <td className="py-2.5 text-right">{formatMoney(Number(b.cost), currency)}</td>
+                        <td className="py-2.5 text-right">{formatMoney(Number(b.cost_per_unit) * Number(b.quantity_received), currency)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -194,7 +194,7 @@ function FlowersPage() {
         <TabsContent value="wastage">
           <SectionCard
             title="Wastage log"
-            actions={
+            action={
               <Button
                 variant="outline"
                 size="sm"
@@ -206,9 +206,8 @@ function FlowersPage() {
                       Flower: w.flower_name,
                       Quantity: w.quantity,
                       Reason: w.reason,
-                      Loss: w.estimated_loss,
+                      Loss: w.cost_value,
                       Staff: w.staff_name ?? "",
-                      Notes: w.notes ?? "",
                     })),
                   )
                 }
@@ -239,7 +238,7 @@ function FlowersPage() {
                         <td className="py-2.5 pr-3 font-medium">{w.flower_name}</td>
                         <td className="py-2.5 pr-3 text-right">{Number(w.quantity)}</td>
                         <td className="py-2.5 pr-3 text-muted-foreground">{w.reason}</td>
-                        <td className="py-2.5 pr-3 text-right">{formatMoney(Number(w.estimated_loss), currency)}</td>
+                        <td className="py-2.5 pr-3 text-right">{formatMoney(Number(w.cost_value), currency)}</td>
                         <td className="py-2.5 text-muted-foreground">{w.staff_name ?? "—"}</td>
                       </tr>
                     ))}
@@ -266,20 +265,20 @@ function FlowersPage() {
               <Input
                 type="number"
                 min={0}
-                value={batch.quantity}
-                onChange={(e) => setBatch({ ...batch, quantity: Math.max(0, Number(e.target.value)) })}
+                value={batch.quantity_received}
+                onChange={(e) => setBatch({ ...batch, quantity_received: Math.max(0, Number(e.target.value)) })}
               />
             </label>
             <label>
-              <FieldLabel>Unit</FieldLabel>
-              <Input value={batch.unit} onChange={(e) => setBatch({ ...batch, unit: e.target.value })} />
+              <FieldLabel>Variety</FieldLabel>
+              <Input value={batch.variety} onChange={(e) => setBatch({ ...batch, variety: e.target.value })} />
             </label>
             <label>
               <FieldLabel>Arrival date</FieldLabel>
               <Input
                 type="date"
-                value={batch.arrival_date}
-                onChange={(e) => setBatch({ ...batch, arrival_date: e.target.value })}
+                value={batch.date_received}
+                onChange={(e) => setBatch({ ...batch, date_received: e.target.value })}
               />
             </label>
             <label>
@@ -296,13 +295,13 @@ function FlowersPage() {
               <Input value={batch.supplier} onChange={(e) => setBatch({ ...batch, supplier: e.target.value })} />
             </label>
             <label>
-              <FieldLabel>Cost</FieldLabel>
+              <FieldLabel>Cost per unit</FieldLabel>
               <Input
                 type="number"
                 min={0}
                 step="0.01"
-                value={batch.cost}
-                onChange={(e) => setBatch({ ...batch, cost: Math.max(0, Number(e.target.value)) })}
+                value={batch.cost_per_unit}
+                onChange={(e) => setBatch({ ...batch, cost_per_unit: Math.max(0, Number(e.target.value)) })}
               />
             </label>
           </div>
@@ -354,13 +353,9 @@ function FlowersPage() {
                 type="number"
                 min={0}
                 step="0.01"
-                value={waste.estimated_loss}
-                onChange={(e) => setWaste({ ...waste, estimated_loss: Math.max(0, Number(e.target.value)) })}
+                value={waste.cost_value}
+                onChange={(e) => setWaste({ ...waste, cost_value: Math.max(0, Number(e.target.value)) })}
               />
-            </label>
-            <label className="sm:col-span-2">
-              <FieldLabel>Notes</FieldLabel>
-              <Textarea rows={2} value={waste.notes} onChange={(e) => setWaste({ ...waste, notes: e.target.value })} />
             </label>
           </div>
           <DialogFooter>

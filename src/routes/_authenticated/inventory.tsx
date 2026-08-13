@@ -27,13 +27,13 @@ export const Route = createFileRoute("/_authenticated/inventory")({
 
 const emptyForm = {
   name: "",
-  category_id: "",
+  category: "Fresh Flowers",
   unit: "stem",
-  quantity: 0,
+  current_stock: 0,
   reorder_level: 0,
   cost_price: 0,
   selling_price: 0,
-  supplier: "",
+  supplier_name: "",
 };
 
 function InventoryPage() {
@@ -50,7 +50,7 @@ function InventoryPage() {
     queryKey: ["inventory"],
     queryFn: async () => {
       const [items, categories] = await Promise.all([
-        supabase.from("inventory_items").select("*, categories(id,name)").order("name"),
+        supabase.from("inventory_items").select("*").order("name"),
         supabase.from("categories").select("id,name").order("name"),
       ]);
       return { items: items.data ?? [], categories: categories.data ?? [] };
@@ -60,9 +60,9 @@ function InventoryPage() {
   const save = useMutation({
     mutationFn: async () => {
       if (!form.name.trim()) throw new Error("Item name is required.");
-      if (form.quantity < 0 || form.cost_price < 0 || form.selling_price < 0)
+      if (form.current_stock < 0 || form.cost_price < 0 || form.selling_price < 0)
         throw new Error("Quantities and prices cannot be negative.");
-      const payload = { ...form, category_id: form.category_id || null };
+      const payload = { ...form };
       const { error } = editId
         ? await supabase.from("inventory_items").update(payload).eq("id", editId)
         : await supabase.from("inventory_items").insert(payload);
@@ -82,19 +82,19 @@ function InventoryPage() {
     const list = (data?.items ?? []).filter(
       (i) =>
         i.name.toLowerCase().includes(search.toLowerCase()) &&
-        (category === "all" || i.category_id === category),
+        (category === "all" || i.category === category),
     );
     return [...list].sort((a, b) =>
       sort === "quantity"
-        ? Number(a.quantity) - Number(b.quantity)
+        ? Number(a.current_stock) - Number(b.current_stock)
         : sort === "value"
-          ? Number(b.quantity) * Number(b.cost_price) - Number(a.quantity) * Number(a.cost_price)
+          ? Number(b.current_stock) * Number(b.cost_price) - Number(a.current_stock) * Number(a.cost_price)
           : a.name.localeCompare(b.name),
     );
   }, [data, search, category, sort]);
 
-  const lowStock = items.filter((i) => Number(i.quantity) <= Number(i.reorder_level));
-  const stockValue = items.reduce((s, i) => s + Number(i.quantity) * Number(i.cost_price), 0);
+  const lowStock = items.filter((i) => Number(i.current_stock) <= Number(i.reorder_level));
+  const stockValue = items.reduce((s, i) => s + Number(i.current_stock) * Number(i.cost_price), 0);
 
   return (
     <div>
@@ -110,13 +110,13 @@ function InventoryPage() {
                   "inventory",
                   items.map((i) => ({
                     Item: i.name,
-                    Category: i.categories?.name ?? "",
+                    Category: i.category,
                     Unit: i.unit,
-                    Quantity: i.quantity,
+                    Quantity: i.current_stock,
                     "Reorder level": i.reorder_level,
                     "Cost price": i.cost_price,
                     "Selling price": i.selling_price,
-                    Supplier: i.supplier ?? "",
+                    Supplier: i.supplier_name ?? "",
                   })),
                 )
               }
@@ -157,7 +157,7 @@ function InventoryPage() {
             <SelectContent>
               <SelectItem value="all">All categories</SelectItem>
               {(data?.categories ?? []).map((c) => (
-                <SelectItem key={c.id} value={c.id}>
+                <SelectItem key={c.id} value={c.name}>
                   {c.name}
                 </SelectItem>
               ))}
@@ -196,21 +196,21 @@ function InventoryPage() {
               </thead>
               <tbody>
                 {items.map((i) => {
-                  const low = Number(i.quantity) <= Number(i.reorder_level);
+                  const low = Number(i.current_stock) <= Number(i.reorder_level);
                   return (
                     <tr key={i.id} className="border-b border-border/60">
                       <td className="py-2.5 pr-3 font-medium">
                         {i.name}
                         {low && <span className="ml-2 text-xs text-destructive">Low stock</span>}
                       </td>
-                      <td className="py-2.5 pr-3 text-muted-foreground">{i.categories?.name ?? "—"}</td>
+                      <td className="py-2.5 pr-3 text-muted-foreground">{i.category}</td>
                       <td className="py-2.5 pr-3 text-right">
-                        {Number(i.quantity)} {i.unit}
+                        {Number(i.current_stock)} {i.unit}
                       </td>
                       <td className="py-2.5 pr-3 text-right text-muted-foreground">{Number(i.reorder_level)}</td>
                       <td className="py-2.5 pr-3 text-right">{formatMoney(Number(i.cost_price), currency)}</td>
                       <td className="py-2.5 pr-3 text-right">{formatMoney(Number(i.selling_price), currency)}</td>
-                      <td className="py-2.5 pr-3 text-muted-foreground">{i.supplier ?? "—"}</td>
+                      <td className="py-2.5 pr-3 text-muted-foreground">{i.supplier_name ?? "—"}</td>
                       <td className="py-2.5 text-right">
                         <Button
                           size="sm"
@@ -219,13 +219,13 @@ function InventoryPage() {
                             setEditId(i.id);
                             setForm({
                               name: i.name,
-                              category_id: i.category_id ?? "",
+                              category: i.category,
                               unit: i.unit,
-                              quantity: Number(i.quantity),
+                              current_stock: Number(i.current_stock),
                               reorder_level: Number(i.reorder_level),
                               cost_price: Number(i.cost_price),
                               selling_price: Number(i.selling_price),
-                              supplier: i.supplier ?? "",
+                              supplier_name: i.supplier_name ?? "",
                             });
                             setOpen(true);
                           }}
@@ -254,13 +254,13 @@ function InventoryPage() {
             </label>
             <label>
               <FieldLabel>Category</FieldLabel>
-              <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v })}>
+              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Uncategorised" />
                 </SelectTrigger>
                 <SelectContent>
                   {(data?.categories ?? []).map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
+                    <SelectItem key={c.id} value={c.name}>
                       {c.name}
                     </SelectItem>
                   ))}
@@ -276,8 +276,8 @@ function InventoryPage() {
               <Input
                 type="number"
                 min={0}
-                value={form.quantity}
-                onChange={(e) => setForm({ ...form, quantity: Math.max(0, Number(e.target.value)) })}
+                value={form.current_stock}
+                onChange={(e) => setForm({ ...form, current_stock: Math.max(0, Number(e.target.value)) })}
               />
             </label>
             <label>
@@ -311,7 +311,7 @@ function InventoryPage() {
             </label>
             <label className="sm:col-span-2">
               <FieldLabel>Supplier</FieldLabel>
-              <Input value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} />
+              <Input value={form.supplier_name} onChange={(e) => setForm({ ...form, supplier_name: e.target.value })} />
             </label>
           </div>
           <DialogFooter>
