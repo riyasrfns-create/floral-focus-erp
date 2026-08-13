@@ -712,6 +712,7 @@ export type Database = {
         Returns: boolean
       }
       is_owner: { Args: never; Returns: boolean }
+      is_staff_member: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "owner" | "staff"
