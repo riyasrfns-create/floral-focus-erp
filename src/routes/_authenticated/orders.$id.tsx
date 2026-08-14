@@ -14,9 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const Route = createFileRoute("/_authenticated/orders/$id")({
   head: () => ({
     meta: [
-      { title: "Order details — Petal & Stem Flower Shop ERP" },
+      { title: "Order details — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Order items, status flow and one-click invoice conversion." },
-      { property: "og:title", content: "Order details — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Order details — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Track a flower shop order through preparation and handover." },
     ],
   }),

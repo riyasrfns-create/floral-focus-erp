@@ -21,9 +21,9 @@ import { PageHeader, SectionCard, StatCard, StatusBadge, EmptyState } from "@/co
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Petal & Stem Flower Shop ERP" },
+      { title: "Dashboard — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Today's sales, orders, deliveries and stock alerts at a glance." },
-      { property: "og:title", content: "Dashboard — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Dashboard — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Daily overview of the flower shop's sales and operations." },
     ],
   }),

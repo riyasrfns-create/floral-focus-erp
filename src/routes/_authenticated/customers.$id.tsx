@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/customers/$id")({
   head: () => ({
     meta: [
-      { title: "Customer profile — Petal & Stem Flower Shop ERP" },
+      { title: "Customer profile — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Order history, lifetime spend and outstanding balance for a customer." },
-      { property: "og:title", content: "Customer profile — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Customer profile — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Flower shop customer profile and purchase history." },
     ],
   }),

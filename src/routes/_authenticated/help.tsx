@@ -4,9 +4,9 @@ import { PageHeader, SectionCard } from "@/components/erp/ui";
 export const Route = createFileRoute("/_authenticated/help")({
   head: () => ({
     meta: [
-      { title: "Help & Guide — Petal & Stem Flower Shop ERP" },
+      { title: "Help & Guide — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Step-by-step guide for daily flower shop tasks: orders, invoices, stock and reports." },
-      { property: "og:title", content: "Help & Guide — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Help & Guide — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Simple daily instructions for shop staff using the florist ERP." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

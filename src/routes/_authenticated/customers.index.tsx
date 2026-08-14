@@ -27,9 +27,9 @@ import {
 export const Route = createFileRoute("/_authenticated/customers/")({
   head: () => ({
     meta: [
-      { title: "Customers — Petal & Stem Flower Shop ERP" },
+      { title: "Customers — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Retail, corporate and event customer records with spend history." },
-      { property: "og:title", content: "Customers — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Customers — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Manage flower shop customers, contacts and notes." },
     ],
   }),

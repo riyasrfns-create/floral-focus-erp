@@ -20,12 +20,12 @@ const SIGNUP_ROLES = [
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Petal & Stem Flower Shop ERP" },
-      { name: "description", content: "Sign in to the Petal & Stem flower shop management system." },
-      { property: "og:title", content: "Sign in — Petal & Stem Flower Shop ERP" },
+      { title: "Sign in — Flower Industries Flower Shop ERP" },
+      { name: "description", content: "Sign in to the Flower Industries flower shop management system." },
+      { property: "og:title", content: "Sign in — Flower Industries Flower Shop ERP" },
       {
         property: "og:description",
-        content: "Staff and owner access to the Petal & Stem flower shop management system.",
+        content: "Staff and owner access to the Flower Industries flower shop management system.",
       },
     ],
   }),
