@@ -102,7 +102,7 @@ function AuthPage() {
       <div className="hidden flex-col justify-between bg-sidebar p-10 text-sidebar-foreground lg:flex">
         <div className="flex items-center gap-2">
           <Flower2 className="size-6 text-sidebar-primary" />
-          <span className="font-display text-lg font-semibold">Petal &amp; Stem</span>
+          <span className="font-display text-lg font-semibold">Flower Industries</span>
         </div>
         <div>
           <h1 className="max-w-md font-display text-4xl leading-tight">
@@ -120,7 +120,7 @@ function AuthPage() {
         <div className="w-full max-w-sm">
           <div className="mb-6 flex items-center gap-2 lg:hidden">
             <Flower2 className="size-6 text-primary" />
-            <span className="font-display text-lg font-semibold">Petal &amp; Stem</span>
+            <span className="font-display text-lg font-semibold">Flower Industries</span>
           </div>
 
           <Tabs defaultValue="signin">
