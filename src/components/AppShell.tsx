@@ -53,7 +53,7 @@ export function AppShell() {
           <Flower2 className="size-6 text-sidebar-primary" />
           <div className="min-w-0">
             <p className="truncate font-display text-base font-semibold">
-              {settings?.business_name ?? "Petal & Stem"}
+              {settings?.business_name ?? "Flower Industries"}
             </p>
             <p className="text-xs text-sidebar-foreground/60">Flower Shop ERP</p>
           </div>

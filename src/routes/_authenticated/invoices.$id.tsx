@@ -17,9 +17,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const Route = createFileRoute("/_authenticated/invoices/$id")({
   head: () => ({
     meta: [
-      { title: "Invoice — Petal & Stem Flower Shop ERP" },
+      { title: "Invoice — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Printable flower shop invoice with payment recording." },
-      { property: "og:title", content: "Invoice — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Invoice — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "View, print and settle a flower shop invoice." },
     ],
   }),

@@ -17,9 +17,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const Route = createFileRoute("/_authenticated/flowers")({
   head: () => ({
     meta: [
-      { title: "Flower Freshness — Petal & Stem Flower Shop ERP" },
+      { title: "Flower Freshness — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Track flower batches, shelf life and wastage for a florist business." },
-      { property: "og:title", content: "Flower Freshness — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Flower Freshness — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Batch arrival dates, expiry alerts and wastage logging." },
     ],
   }),

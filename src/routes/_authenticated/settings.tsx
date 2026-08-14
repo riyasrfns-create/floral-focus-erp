@@ -13,9 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Petal & Stem Flower Shop ERP" },
+      { title: "Settings — Flower Industries Flower Shop ERP" },
       { name: "description", content: "Configure business details, currency, tax rate and invoice numbering." },
-      { property: "og:title", content: "Settings — Petal & Stem Flower Shop ERP" },
+      { property: "og:title", content: "Settings — Flower Industries Flower Shop ERP" },
       { property: "og:description", content: "Owner-only business configuration for the florist ERP." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
