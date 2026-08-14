@@ -1,0 +1,1 @@
+UPDATE public.business_settings SET business_name = 'Flower Industries', updated_at = now();
